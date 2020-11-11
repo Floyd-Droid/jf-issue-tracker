@@ -21,8 +21,6 @@ env = environ.Env(
 )
 environ.Env.read_env()
 
-DEBUG = env('DEBUG')
-
 SECRET_KEY = env.str('SECRET_KEY')
 
 # Application definition
@@ -107,10 +105,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATICFILES_LOCATION = 'static'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 LOGIN_REDIRECT_URL = 'issues:my-issues'
 LOGOUT_REDIRECT_URL = 'login'
