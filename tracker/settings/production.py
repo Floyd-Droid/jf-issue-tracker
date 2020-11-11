@@ -3,13 +3,13 @@ import dj_database_url
 import os
 
 
-ALLOWED_HOSTS = ['127.0.0.1', 'herokuapp.com']
+ALLOWED_HOSTS = ['herokuapp.com']
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 DATABASES = {
-    'default': dj_database_url.parse(env('DATABASE_URL')) 
+    'default': dj_database_url.parse(env('DATABASE_URL'))
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
