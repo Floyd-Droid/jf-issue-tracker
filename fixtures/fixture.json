@@ -1,0 +1,555 @@
+[
+{
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+        "name": "Admin",
+        "permissions": [
+            1,
+            2,
+            3,
+            4,
+            9,
+            10,
+            11,
+            12,
+            5,
+            6,
+            7,
+            8,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            25,
+            26,
+            27,
+            28,
+            37,
+            38,
+            39,
+            40,
+            33,
+            34,
+            35,
+            36,
+            29,
+            30,
+            31,
+            32,
+            21,
+            22,
+            23,
+            24
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "Project Manager",
+        "permissions": [
+            25,
+            26,
+            27,
+            28,
+            37,
+            38,
+            39,
+            40,
+            33,
+            34,
+            35,
+            36,
+            29,
+            30,
+            31,
+            32
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+        "name": "Developer",
+        "permissions": [
+            25,
+            28,
+            37,
+            40,
+            36,
+            29,
+            32
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+        "name": "Submitter",
+        "permissions": [
+            25,
+            28,
+            37,
+            40,
+            36,
+            29,
+            32
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 5,
+    "fields": {
+        "name": "Demo_Admin",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 6,
+    "fields": {
+        "name": "Demo_Developer",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 7,
+    "fields": {
+        "name": "Demo_Project_Manager",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 8,
+    "fields": {
+        "name": "Demo_Submitter",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$HixeEVtaI5SU$6CK+dPDjanYZ9U8KGFJT+tfqdFvti20Op2N/wETlczU=",
+        "last_login": "2020-10-05T19:32:41.378Z",
+        "is_superuser": false,
+        "username": "admin1",
+        "first_name": "Homer",
+        "last_name": "Simpson",
+        "email": "hsimp@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-10-04T16:49:32Z",
+        "groups": [
+            1
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$7OekF8kah2Nb$vFFazoeexJCFNheXlqxsgPRBur29tHgmk6zLHSE1Oe0=",
+        "last_login": "2020-10-23T17:11:11.168Z",
+        "is_superuser": false,
+        "username": "dev1",
+        "first_name": "David",
+        "last_name": "Lynch",
+        "email": "dev1@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-24T17:36:40Z",
+        "groups": [
+            3
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$oBYsIZwuAPck$0X+vYbkviUGAdFjOQN+xkF25+1LYI3s3kvMsqdqR5cw=",
+        "last_login": "2020-10-14T16:21:48Z",
+        "is_superuser": false,
+        "username": "manager1",
+        "first_name": "Benjamin",
+        "last_name": "Sisko",
+        "email": "man1@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-24T17:38:20Z",
+        "groups": [
+            2
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$tBCGrYNgYaYo$iT2e66HA897a+cCsNe+RyH+taCALSBkg+nl94/MmEaU=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "submitter1",
+        "first_name": "Alex",
+        "last_name": "Murphy",
+        "email": "robocop@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-26T20:06:28Z",
+        "groups": [
+            4
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$xOHg8ADHfHuf$h/+cmKHYsAF58F0w6gI3LsW6rnydOEZN5YhYs5dpMb4=",
+        "last_login": "2020-10-20T17:01:43Z",
+        "is_superuser": false,
+        "username": "dev2",
+        "first_name": "Ren",
+        "last_name": "Hoek",
+        "email": "dev2@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-29T20:57:02Z",
+        "groups": [
+            3
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 6,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$oZHBtxO4yE0b$9PUcXxRZ+YE3jHoHlsNN8T5hFczBLA+iwLsMxG95zUw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "manager2",
+        "first_name": "Marcellus",
+        "last_name": "Wallace",
+        "email": "man2@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-29T21:10:48.890Z",
+        "groups": [
+            2
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 7,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$HixeEVtaI5SU$6CK+dPDjanYZ9U8KGFJT+tfqdFvti20Op2N/wETlczU=",
+        "last_login": "2020-10-05T19:32:41.378Z",
+        "is_superuser": false,
+        "username": "DemoUser",
+        "first_name": "Demo",
+        "last_name": "Admin",
+        "email": "demo@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-10-05T16:49:32Z",
+        "groups": [
+            1
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 1,
+    "fields": {
+        "app_label": "admin",
+        "model": "logentry"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 2,
+    "fields": {
+        "app_label": "auth",
+        "model": "permission"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 3,
+    "fields": {
+        "app_label": "auth",
+        "model": "group"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 4,
+    "fields": {
+        "app_label": "auth",
+        "model": "user"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 5,
+    "fields": {
+        "app_label": "contenttypes",
+        "model": "contenttype"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 6,
+    "fields": {
+        "app_label": "sessions",
+        "model": "session"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 7,
+    "fields": {
+        "app_label": "issues",
+        "model": "comment"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 8,
+    "fields": {
+        "app_label": "issues",
+        "model": "reply"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 9,
+    "fields": {
+        "app_label": "issues",
+        "model": "project"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 10,
+    "fields": {
+        "app_label": "issues",
+        "model": "issue"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 11,
+    "fields": {
+        "app_label": "issues",
+        "model": "projectuser"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 12,
+    "fields": {
+        "app_label": "issues",
+        "model": "issueuser"
+    }
+},
+{
+    "model": "issues.project",
+    "pk": 1,
+    "fields": {
+        "title": "Project1",
+        "description": "Project1 description.",
+        "slug": "project1",
+        "assigned_users": [
+            1,
+            2,
+            3,
+            4,
+            7
+        ]
+    }
+},
+{
+    "model": "issues.project",
+    "pk": 2,
+    "fields": {
+        "title": "Project2",
+        "description": "Project2 description.",
+        "slug": "project2",
+        "assigned_users": [
+            5,
+            6
+        ]
+    }
+},
+{
+    "model": "issues.issue",
+    "pk": 1,
+    "fields": {
+        "title": "Issue 1",
+        "description": "Issue 1 for Project1.",
+        "num": 1,
+        "date_created": "2020-10-23T15:24:34.156Z",
+        "date_updated": "2020-10-23T15:46:33.837Z",
+        "date_closed": "2020-10-23T15:46:33.836Z",
+        "submitter": 1,
+        "assignee": 3,
+        "project": 1,
+        "priority": 3,
+        "status": "closed",
+        "issue_type": "bug",
+        "tag": "Test",
+        "attachment": "",
+        "assigned_users": [
+            1,
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "issues.issue",
+    "pk": 2,
+    "fields": {
+        "title": "Issue 2",
+        "description": "Issue 2 for Project1.",
+        "num": 2,
+        "date_created": "2020-10-24T14:47:36.160Z",
+        "date_updated": "2020-10-24T15:07:42.530Z",
+        "date_closed": null,
+        "submitter": 1,
+        "assignee": 3,
+        "project": 1,
+        "priority": 3,
+        "status": "open",
+        "issue_type": "bug",
+        "tag": "Test2",
+        "attachment": "",
+        "assigned_users": [
+            1,
+            3
+        ]
+    }
+},
+{
+    "model": "issues.issue",
+    "pk": 3,
+    "fields": {
+        "title": "Issue 2",
+        "description": "Issue 1 for Project2.",
+        "num": 1,
+        "date_created": "2020-10-24T14:47:36.160Z",
+        "date_updated": "2020-10-24T15:07:42.530Z",
+        "date_closed": null,
+        "submitter": 1,
+        "assignee": 3,
+        "project": 2,
+        "priority": 3,
+        "status": "open",
+        "issue_type": "bug",
+        "tag": "Test2",
+        "attachment": "",
+        "assigned_users": [
+            5,
+            6
+        ]
+    }
+},
+{
+    "model": "issues.comment",
+    "pk": 1,
+    "fields": {
+        "text": "Project1 Issue1 comment1.",
+        "author": 1,
+        "date_created": "2020-10-16T16:03:47.749Z",
+        "date_updated": "2020-10-20T00:04:46.099Z",
+        "issue": 1
+    }
+},
+{
+    "model": "issues.comment",
+    "pk": 2,
+    "fields": {
+        "text": "Project1 Issue1 comment2.",
+        "author": 2,
+        "date_created": "2020-10-16T16:03:47.749Z",
+        "date_updated": "2020-10-20T00:04:46.099Z",
+        "issue": 1
+    }
+},
+{
+    "model": "issues.comment",
+    "pk": 3,
+    "fields": {
+        "text": "Project1 Issue2 comment1.",
+        "author": 4,
+        "date_created": "2020-10-16T16:56:23.596Z",
+        "date_updated": "2020-10-20T00:04:57.607Z",
+        "issue": 2
+    }
+},
+{
+    "model": "issues.comment",
+    "pk": 4,
+    "fields": {
+        "text": "Project2 Issue1 comment1.",
+        "author": 5,
+        "date_created": "2020-10-16T16:56:23.596Z",
+        "date_updated": "2020-10-20T00:04:57.607Z",
+        "issue": 3
+    }
+},
+{
+    "model": "issues.reply",
+    "pk": 1,
+    "fields": {
+        "text": "Reply1 on Comment1 for Project1 Issue1.",
+        "author": 2,
+        "comment": 1,
+        "date_created": "2020-10-18T19:19:43.054Z",
+        "date_updated": "2020-10-19T20:32:25.230Z"
+    }
+},
+{
+    "model": "issues.reply",
+    "pk": 2,
+    "fields": {
+        "text": "Reply2 on Comment1 for Project1 Issue1.",
+        "author": 4,
+        "comment": 1,
+        "date_created": "2020-10-18T19:19:43.054Z",
+        "date_updated": "2020-10-19T20:32:25.230Z"
+    }
+},
+{
+    "model": "issues.reply",
+    "pk": 3,
+    "fields": {
+        "text": "Reply1 on Comment1 for Project2 Issue1.",
+        "author": 6,
+        "comment": 4,
+        "date_created": "2020-10-18T19:19:43.054Z",
+        "date_updated": "2020-10-19T20:32:25.230Z"
+    }
+}
+]
