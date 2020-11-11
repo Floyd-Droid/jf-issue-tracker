@@ -1,0 +1,17 @@
+{% extends 'rbase.html' %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<div class="container registration">
+  <div class="container section-header">
+    <h2>Sign up</h2>
+  </div>
+  <form method="post">
+    {% csrf_token %} 
+    {{ form.as_p }}
+    <div class="d-flex justify-content-around my-5">
+      <a class="btn btn-primary" href="{% url 'login' %}">Back to login</a>
+      <button class="btn btn-success submit-btn" type="submit">Create Account</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

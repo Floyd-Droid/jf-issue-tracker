@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %} 
+  {% if user_obj %}Edit User 
+  {% else %} Create User
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container page-item-wrapper">
+  {% if user_obj %}
+    <div class="container section-header">
+      <h3>User Info</h3>
+    </div>
+    <form action="{% url 'issues:user-update' username=user_obj.username type=user_type %}" method="POST">
+  {% else %}
+    <div class="container section-header">
+      <h3>Add a user</h3>
+    </div>
+    <form action="{% url 'issues:user-create' %}" method="POST">
+  {% endif %}
+    {% csrf_token %}
+    <div class="row form-group my-5">
+      <div class="col">
+        {{form.first_name.label}} {{form.first_name}} {{form.first_name.errors}}
+      </div>
+      <div class="col">
+        {{form.last_name.label}} {{form.last_name}} {{form.last_name.errors}}
+      </div>
+    </div>
+    <div class="row form-group my-5">
+      <div class="col">
+        {{form.username.label}} {{form.username}} {{form.username.errors}}
+      </div>
+      <div class="col">
+        {{form.email.label}} {{form.email}} {{form.email.errors}}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col">{{form.select_group.label}} {{form.select_group}} {{form.select_group.errors}}</div>
+      <div class="col">
+      </div>
+    </div>
+    <div class="btn-container d-flex justify-content-center">
+      <button class="btn btn-success submit-btn" type="submit">Save</button>
+    </div>
+  </form>
+</div>
+
+{% if not user_obj %}
+<script>
+  document.getElementById("id_select_group").selectedIndex = -1;
+</script>
+{% endif %}
+
+{% endblock %}

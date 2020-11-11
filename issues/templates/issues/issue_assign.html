@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Assign Users to an Issue{% endblock %}
+{% block content %}
+{% if messages %}
+<div class="container message-wrapper">
+  <ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+<div class="container page-item-wrapper">
+  <div class="container section-header">
+    <h3>Personnel Currently Assigned to Issue #{{issue.num}}</h3>
+  </div>
+  {% if issue_user_list %}
+  <table class="table table-sm table-striped table-bordered" id="issue-assign-table">
+    <thead class="thead-dark">
+      <tr>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Group</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in issue_user_list %}
+      <tr>
+        <td class="align-middle">{{user.get_full_name}}</td>
+        <td class="align-middle">{{user.username}}</td>
+        <td class="align-middle">{{user.email}}</td>
+        <td class="align-middle">{{user.groups.all.0.name}}</td>
+      </tr>
+      {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty-msg">
+    <p class="empty-msg">There are currently no users assigned to this issue.</p>
+  </div>
+  {% endif %}
+</div>
+<div class="container page-item-wrapper">
+  <div class="container section-header">
+    <h3>Assign Personnel to Issue #{{issue.num}}</h3>
+  </div>
+  {% if project_user_list %}
+  <form action="{% url 'issues:issue-assign' project_slug=issue.project.slug issue_num=issue.num %}" method=POST>
+    {% csrf_token %}
+    <table class="table table-sm table-striped table-bordered" id="project-assign-table">
+      <thead class="thead-dark">
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Group</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in project_user_list %}
+        <tr>
+          <td class="align-middle"><input type="checkbox" name="selection" value="{{user.id}}"></td>
+          <td class="align-middle">{{user.get_full_name}}</td>
+          <td class="align-middle">{{user.username}}</td>
+          <td class="align-middle">{{user.email}}</td>
+          <td class="align-middle">{{user.groups.all.0.name}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="d-flex justify-content-around pt-3">
+      <a type="submit" class="btn btn-primary" href="{% url 'issues:project-detail' slug=issue.project.slug %}">Back
+        to project details</a>
+      <button type="submit" class="btn btn-primary" id="issue-unassign-btn" name='action' value="unassign">Remove from
+        issue</button>
+      <button type="submit" class="btn btn-primary" id="issue-assign-btn" name='action' value="assign">Assign
+        to issue</button>
+    </div>
+  </form>
+  {% else %}
+  <div class="empty-msg">
+    <p class="empty-msg">There are currently no users assigned to project '{{issue.project.title}}'. Please assign users to the project before assigning issues.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

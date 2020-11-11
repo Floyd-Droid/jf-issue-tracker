@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if project %}Edit Project
+{% else %} Add a Project
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container page-item-wrapper">
+  <div class="container section-header">
+    {% if project %}
+      <h3>Project Info</h3>
+    </div>
+    <form action="{% url 'issues:project-update' slug=project.slug %}" method="POST">
+    {% else %}
+      <h3>Add a Project</h3>
+    </div>
+    <form action="{% url 'issues:project-create' %}" method="POST">
+    {% endif %}
+      {% csrf_token %}
+      <div class="row">
+        <div class="col">
+          <span class="top">{{form.title.label}} &nbsp</span> {{form.title}}
+          {{form.title.errors}}
+        </div>
+        <div class="col">
+          <span class="top">{{form.description.label}} &nbsp</span> {{form.description}}
+          {{form.description.errors}}
+        </div>
+      </div>
+      <div class="btn-container d-flex justify-content-center">
+        <button class="btn btn-success submit-btn" type="submit">Save</button>
+      </div>
+    </form>
+</div>
+{% endblock %}

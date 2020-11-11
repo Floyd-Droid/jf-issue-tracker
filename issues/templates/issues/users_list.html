@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+{% if messages %}
+  <div class="container message-wrapper">
+    <ul class="messages">
+      {% for message in messages %}
+      <li {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+<div class="container page-item-wrapper">
+  <div class="container section-header">
+    <h3>Current Users</h3>
+  </div>
+  <div>
+    <a class="btn btn-primary mb-3" id="add-user-btn" href="{% url 'issues:user-create' %}">
+      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd"
+        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+      </svg>Add a user
+    </a>
+  </div>
+  {% if users %}
+  <table class="table table-sm table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Group</th>
+        <th>Options</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td class="align-middle">{{user.get_full_name}}</td>
+          <td class="align-middle">{{user.username}}</td>
+          <td class="align-middle">{{user.email}}</td>
+          <td class="align-middle">{{user.groups.all.0.name}}</td>
+          <td class="align-middle">
+            <ul>
+              <li><a href="{% url 'issues:user-update' username=user.username type=user_type%}">Edit</a></li>
+              <li><a href="{% url 'issues:password-update' username=user.username type=user_type%}">Change password</a></li>
+            </ul>
+          </td>
+        </tr>
+      {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty-msg">
+    <p class="empty-msg">There are currently no users to display.</p>
+  </div>
+  {% endif %}
+</div>
+<div class="container page-item-wrapper mb-5">
+  <div class="container section-header">
+    <h3>Set User Groups / Delete Users</h3>
+  </div>
+  <form class="d-flex justify-content-around align-items-center" action="{% url 'issues:users-list' %}" method="POST" id="user-group-form">
+    {% csrf_token %}
+    <div class="group-set">
+      <p>{{form.select_user.label}}(s)</p>
+      <p>{{form.select_user}}</p>
+    </div>
+    <div class="group-set">
+      <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-right"
+        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+      </svg>
+    </div>
+    <div class="group-set">
+      <p>{{form.select_group.label}}</p>
+      <p>{{form.select_group}}</p>
+      <p>{{form.select_group.errors}}</p>
+    </div>
+    <button type="submit" class="btn btn-primary" name='action' value="set_group">Set group</button>
+    <span>or</span>
+    <button type="submit" class="btn btn-danger" name="action" value="delete_users" onclick="return confirm('Are you sure you want to delete the selected users?');">Delete selected user(s)</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("id_select_group").selectedIndex = -1;
+</script>
+
+{% if form.errors %}
+<script>
+  window.scrollTo(0, document.body.scrollHeight);
+</script>
+{% endif %}
+
+{% endblock %}

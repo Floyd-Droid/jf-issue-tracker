@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Manage Projects{% endblock %}
+{% block content %}
+{% if messages %}
+<div class="container message-wrapper">
+  <ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+<div class="container page-item-wrapper">
+  <div class="container section-header">
+    <h3>Projects</h3>
+  </div>
+  <div>
+    <a class="btn btn-primary mb-3" id="add-project-btn" href="{% url 'issues:project-create' %}">
+      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+      </svg>Add a project
+    </a>
+  </div>
+  {% if object_list %}
+  <table class="table table-sm table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Options</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for project in object_list %}
+      <tr>
+        <td class="align-middle">{{project.title}}</td>
+        <td class="align-middle">{{project.description}}</td>
+        <td class="align-middle">
+          <ul>
+            <li><a href="{% url 'issues:project-detail' slug=project.slug %}">View Details</a></li>
+            <li><a href="{% url 'issues:project-assign' slug=project.slug %}">Assign Users</a></li>
+          </ul>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty-msg">
+    <p class="empty-msg">There are currently no projects to display.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
