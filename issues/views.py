@@ -517,6 +517,8 @@ class IssueUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user.email != 'demo@gmail.com':
             if issue.status == 'closed':
                 issue.date_closed = datetime.datetime.now()
+                # Unassign all users from the issue, so that their my-issues page isn't cluttered.
+                issue.assigned_users.clear()
             issue.save()
         messages.success(self.request, f"Issue #{issue.num} has been successfully updated.")
         return redirect(reverse('issues:issue-detail', kwargs={'project_slug': self.get_project_object().slug, 'issue_num': issue.num}))
