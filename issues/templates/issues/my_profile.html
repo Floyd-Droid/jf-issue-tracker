@@ -41,7 +41,7 @@
         <a class="btn btn-success submit-btn" href="{% url 'issues:user-update' username=user.username type=user_type%}">Edit
           details</a>
         <a class="btn btn-success submit-btn" href="{% url 'issues:password-update' username=user.username type=user_type%}">Change password</a>
-        <button class="btn btn-danger delete-btn" type="submit">
+        <button class="btn btn-danger delete-btn" type="submit" onclick="return confirm('Click &quot;OK&quot; to delete your profile, or click &quot;Cancel&quot; to go back.');">
           <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor"
             xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"

@@ -106,7 +106,7 @@ div.row {
 }
 
 
-label[for="id_description"] { /* TODO may not need this */
+label[for="id_description"] {
   float: left;
 }
 
@@ -195,6 +195,15 @@ div.comment-text-container textarea, p textarea#id_text{
 
 div.comment-btn-container, div.reply-btn-container {
   margin-left: 2vw;
+}
+
+div.comment-btn-container input, div.reply-btn-container input {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .new-reply-form {

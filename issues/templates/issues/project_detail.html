@@ -16,7 +16,7 @@
   </div>
   <div>
     <p class="title">{{project.title.label}} {{project.title}}</p>
-    <p class="description">{{project.description.label}} {{project.description}}</p>
+    <p class="description">{{project.description.label}} {{project.description|linebreaks}}</p>
   </div>
   {% if user.groups.all.0.name in 'Admin,Project Manager' %}
   <div class="container">
@@ -24,7 +24,7 @@
       {% csrf_token %}
       <div class="btn-container d-flex justify-content-around">
         <a class="btn btn-success submit-btn" href="{% url 'issues:project-update' slug=project.slug %}">Edit details</a>
-        <button class="btn btn-danger delete-btn" type="submit" onclick="return confirm('Are you sure you want to delete this project?');">
+        <button class="btn btn-danger delete-btn" type="submit" onclick="return confirm('Click &quot;OK&quot; to delete this project, or click &quot;Cancel&quot; to go back.');">
           <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor"
             xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"

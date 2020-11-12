@@ -38,7 +38,7 @@
       {% for project in assigned_projects %}
       <tr>
         <td class="align-middle">{{project.title}}</td>
-        <td class="align-middle">{{project.description}}</td>
+        <td class="align-middle">{{project.description|linebreaks}}</td>
         <td class="align-middle">
           <ul>
             <li><a href="{% url 'issues:project-detail' slug=project.slug %}">View Details</a></li>
