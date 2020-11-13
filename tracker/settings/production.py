@@ -13,13 +13,15 @@ DATABASES = {
     'default': env.db('DATABASE_URL')
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'jfissuetracker@gmail.com'
-EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+MAILGUN_SMTP_SERVER = env.str('MAILGUN_SMTP_SERVER')
+MAILGUN_SMTP_PORT = env.str('MAILGUN_SMTP_PORT')
+MAILGUN_SMTP_LOGIN = env.str('MAILGUN_SMTP_LOGIN')
+MAILGUN_SMTP_PASSWORD = env.str('MAILGUN_SMTP_PASSWORD')
+
+EMAIL_HOST = MAILGUN_SMTP_SERVER
+EMAIL_PORT = MAILGUN_SMTP_PORT
+EMAIL_HOST_USER = MAILGUN_SMTP_LOGIN
+EMAIL_HOST_PASSWORD = MAILGUN_SMTP_PASSWORD
 
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
