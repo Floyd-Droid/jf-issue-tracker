@@ -12,17 +12,17 @@
   <div class="container section-header">
     <h3>Issue #{{issue.num}} for project '{{issue.project.title}}'</h3>
   </div>
-  <form action="{% url 'issues:issue-update' project_slug=issue.project.slug issue_num=issue.num %}" method="POST">
+  <form action="{% url 'issues:issue-update' project_slug=issue.project.slug issue_num=issue.num %}" method="POST" enctype="multipart/form-data">
   {% elif project and not issue %}
   <div class="container section-header">
     <h3>Create Issue #{{project.issues.count|add:'1'}} for project '{{project.title}}'</h3>
   </div>
-  <form action="{% url 'issues:project-issue-create' slug=project.slug %}" method="POST">
+  <form action="{% url 'issues:project-issue-create' slug=project.slug %}" method="POST" enctype="multipart/form-data">
   {% else %}
   <div class="container section-header">
     <h3>Create Issue</h3>
   </div>
-  <form action="{% url 'issues:issue-create' %}" method="POST">
+  <form action="{% url 'issues:issue-create' %}" method="POST" enctype="multipart/form-data">
   {% endif %}
     {% csrf_token %}
     <div class="row form-group">

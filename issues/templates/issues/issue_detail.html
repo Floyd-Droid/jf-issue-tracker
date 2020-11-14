@@ -78,7 +78,7 @@
     <div class="col">
       <p class="attr-name">Attachment</p>
       {% if issue.attachment %}
-      <p>{{issue.attachment}}</p>
+      <p><a href="{{ issue.attachment.url }}" target="_blank">{{ issue.attachment.name }}</a></p>
       {% else %}
       <p>None</p>
       {% endif %}

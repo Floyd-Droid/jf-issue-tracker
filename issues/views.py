@@ -45,7 +45,7 @@ def get_users_str(username_list):
 class DemoLoginView(View):
     """Log user in as DemoUser and display message."""
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(username='DemoUser', email='demo@gmail.com')
+        user = User.objects.get(username='DemoUser', email='demo@ex.com')
         login(request, user=user)
         messages.success(self.request, f"You are currently logged in as a demo user. This means that you can interact with this website as if you are an admin, but any attempted changes will not actually be saved.")
         return redirect(reverse('issues:my-issues'))
@@ -80,7 +80,7 @@ class ManageUsersView(LoginRequiredMixin, UserPassesTestMixin, FormView):
             # Change selected user groups and get list of user names.
             for u in user_obj_set:
                 username_list.append(f'{u.username}')
-                if self.request.user.email != 'demo@gmail.com':
+                if self.request.user.email != 'demo@ex.com':
                     u.groups.set([group_obj.id])
                     u.save()
             
@@ -93,7 +93,7 @@ class ManageUsersView(LoginRequiredMixin, UserPassesTestMixin, FormView):
         elif self.request.POST.get('action') == 'delete_users':
             for u in user_obj_set:
                 username_list.append(f'{u.username}')
-                if self.request.user.email != 'demo@gmail.com':
+                if self.request.user.email != 'demo@ex.com':
                     u.is_active = False
                     u.save()
 
@@ -132,7 +132,7 @@ class PasswordView(LoginRequiredMixin, UserPassesTestMixin, FormView):
         
     def form_valid(self, form):
         u = self.get_user_object()
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             new_pw = form.cleaned_data.get('password')
             u.set_password(new_pw)
             u.save()
@@ -165,7 +165,7 @@ class UserCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         group_obj = form.cleaned_data.get('select_group')
         email = form.cleaned_data.get('email')
         new_user = form.save(commit=False)
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             new_user.email = email
             new_user.save()
             new_user.groups.set([group_obj.id])
@@ -209,7 +209,7 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         group_obj = form.cleaned_data.get('select_group')
         email = form.cleaned_data.get('email')
         updated_user = form.save(commit=False)
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             updated_user.email = email
             updated_user.save()
             updated_user.groups.set([group_obj])
@@ -289,7 +289,7 @@ class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return admin_access or manager_access
     
     def form_valid(self, form):
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             new_proj = form.save()
 
             # Auto-assign managers to the projects they create.
@@ -315,7 +315,7 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     
     def post(self, request, *args, **kwargs):
         project = self.get_object()
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             project.delete()
         messages.success(request, f"Project '{project.title}' has been successfully deleted.")
         return redirect(reverse('issues:projects-list'))
@@ -334,7 +334,7 @@ class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     
     def form_valid(self, form):
         title = form.cleaned_data.get('title')
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             form.save()
         messages.success(self.request, f"Project '{title}' has been successfully updated.")
         return redirect(reverse('issues:project-detail', kwargs={'slug': self.object.slug}))
@@ -374,14 +374,14 @@ class ProjectAssignView(LoginRequiredMixin, UserPassesTestMixin, View):
             u = get_object_or_404(User, id=user_id)
             username_list.append(f"{u.username}")
 
-            if action == 'assign' and not u in project.assigned_users.all() and self.request.user.email != 'demo@gmail.com':
+            if action == 'assign' and not u in project.assigned_users.all() and self.request.user.email != 'demo@ex.com':
                 project.assigned_users.add(u)
                 # If the user is a project manager or admin, assign all project issues to them as well.
                 if u.groups.filter(name='Admin').exists() or u.groups.filter(name='Project Manager').exists():
                     for issue in issues:
                         issue.assigned_users.add(u)
 
-            elif action == 'unassign' and u in project.assigned_users.all() and self.request.user.email != 'demo@gmail.com':
+            elif action == 'unassign' and u in project.assigned_users.all() and self.request.user.email != 'demo@ex.com':
                 project.assigned_users.remove(u)
                 # Unassign the user from all project issues as well.
                 for issue in issues:
@@ -420,27 +420,20 @@ class IssueCreateView(LoginRequiredMixin, CreateView):
         }
         return render(request, self.template_name, context)
     
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(user=request.user, data=request.POST)
-        if form.is_valid():
-            new_issue = form.save(commit=False)
-            if self.request.user.email != 'demo@gmail.com':
-                new_issue.submitter = request.user
-                new_issue.save()
+    def form_valid(self, form):
+        new_issue = form.save(commit=False)
+        if self.request.user.email != 'demo@ex.com':
+            new_issue.submitter = self.request.user
+            new_issue.save()
 
-                # Assign all project managers (group id=2), the submitter, and the assignee to the new issue.
-                project_managers = new_issue.project.assigned_users.filter(groups__in=[2])
-                new_issue.assigned_users.add(request.user, new_issue.assignee, *project_managers)
+            # Assign all project managers (group id=2), the submitter, and the assignee to the new issue.
+            project_managers = new_issue.project.assigned_users.filter(groups__in=[2])
+            new_issue.assigned_users.add(self.request.user, new_issue.assignee, *project_managers)
 
-                return redirect(reverse('issues:issue-detail', kwargs={'project_slug': new_issue.project.slug, 'issue_num': new_issue.num}))
-            else:
-                messages.success(self.request, f"Issue '{new_issue.title}' for project '{new_issue.project.title}' has been created.")
-                return redirect(reverse('issues:my-issues'))
+            return redirect(reverse('issues:issue-detail', kwargs={'project_slug': new_issue.project.slug, 'issue_num': new_issue.num}))
         else:
-            context = {
-                'form': self.form_class(user=request.user, data=request.POST)
-            }
-            return render(request, self.template_name, context)
+            messages.success(self.request, f"Issue '{new_issue.title}' for project '{new_issue.project.title}' has been created.")
+            return redirect(reverse('issues:my-issues'))
 
 
 class ProjectIssueCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -467,7 +460,7 @@ class ProjectIssueCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView
     def form_valid(self, form):
         project = self.get_project_object()
         new_issue = form.save(commit=False)
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             new_issue.submitter = self.request.user
             new_issue.project = project
             new_issue.save()
@@ -514,7 +507,7 @@ class IssueUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     
     def form_valid(self, form):
         issue = form.save(commit=False)
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             if issue.status == 'closed':
                 issue.date_closed = datetime.datetime.now()
                 # Unassign all users from the issue, so that their my-issues page isn't cluttered.
@@ -576,7 +569,7 @@ class IssueDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request, *args, **kwargs):
         issue = self.get_object()
         issue_num = issue.num
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             issue.delete()
         messages.success(request, f"Issue #{issue_num} for project '{issue.project.title}' has been successfully deleted.")
         return redirect(reverse('issues:project-detail', kwargs={'slug': issue.project.slug}))
@@ -622,10 +615,10 @@ class IssueAssignView(LoginRequiredMixin, UserPassesTestMixin, FormView):
             username = f"{user.username}"
             username_list.append(username)
 
-            if action == 'assign' and not user in issue.assigned_users.all() and self.request.user.email != 'demo@gmail.com':
+            if action == 'assign' and not user in issue.assigned_users.all() and self.request.user.email != 'demo@ex.com':
                 issue.assigned_users.add(user)
 
-            elif action == 'unassign' and user in issue.assigned_users.all() and self.request.user.email != 'demo@gmail.com':
+            elif action == 'unassign' and user in issue.assigned_users.all() and self.request.user.email != 'demo@ex.com':
                 issue.assigned_users.remove(user)
 
         users_str = get_users_str(username_list)
@@ -658,7 +651,7 @@ class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
         if request.is_ajax:
             form = self.form_class(request.POST)
             if form.is_valid:
-                if self.request.user.email != 'demo@gmail.com':
+                if self.request.user.email != 'demo@ex.com':
                     issue = self.get_issue_object()
                     new_comment = form.save(commit=False)
                     new_comment.author = request.user
@@ -700,7 +693,7 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
             comment = get_object_or_404(Comment, id=comment_id)
             form = self.form_class({'text': updated_text}, instance=comment)
             if form.is_valid:
-                if self.request.user.email != 'demo@gmail.com':
+                if self.request.user.email != 'demo@ex.com':
                     form.save()
                 return JsonResponse({}, status=200)
             else:
@@ -731,7 +724,7 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     
     def post(self, request, *args, **kwargs):
         if request.is_ajax:
-            if self.request.user.email != 'demo@gmail.com':
+            if self.request.user.email != 'demo@ex.com':
                 comment_id = request.POST.get('comment-id')
                 comment = get_object_or_404(Comment, id=comment_id)
                 comment.text = "[deleted]"
@@ -762,7 +755,7 @@ class ReplyCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
         if request.is_ajax:
             form = self.form_class(request.POST)
             if form.is_valid:
-                if self.request.user.email != 'demo@gmail.com':
+                if self.request.user.email != 'demo@ex.com':
                     comment_id = request.POST.get("comment-id")
                     new_reply = form.save(commit=False)
                     new_reply.author = request.user
@@ -797,7 +790,7 @@ class ReplyDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     
     def post(self, request, *args, **kwargs):
         if request.is_ajax:
-            if self.request.user.email != 'demo@gmail.com':
+            if self.request.user.email != 'demo@ex.com':
                 reply_id = request.POST.get('reply-id')
                 reply = get_object_or_404(Reply, id=reply_id)
                 reply.text = "[deleted]"
@@ -836,7 +829,7 @@ class ReplyUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
             reply = get_object_or_404(Reply, id=reply_id)
             form = self.form_class({'text': updated_text}, instance=reply)
             if form.is_valid:
-                if self.request.user.email != 'demo@gmail.com':
+                if self.request.user.email != 'demo@ex.com':
                     form.save()
                 return JsonResponse({}, status=200)
             else:
@@ -874,7 +867,7 @@ class ProfileDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     
     def post(self, request, *args, **kwargs):
         user = self.get_user_object()
-        if self.request.user.email != 'demo@gmail.com':
+        if self.request.user.email != 'demo@ex.com':
             user.is_active = False
             user.save()
         messages.success(self.request, f"Your account has been successfully deleted.")

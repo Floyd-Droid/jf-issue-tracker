@@ -3,4 +3,5 @@
 __pycache__
 .env
 development.py
+media
 pw_reset_emails
