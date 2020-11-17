@@ -232,14 +232,13 @@
       type: "POST",
       url: "{% url 'issues:comment-create' project_slug=issue.project.slug issue_num=issue.num %}",
       data: $("#top-comment-form").serialize(),
-      success: function (response) {
-        console.log(response)
+      success: function (data) {
         // Clear the form and reload to display the new comment
         $("#top-comment-form").trigger("reset");
         location.reload();
       },
-      error: function (response) {
-        alert(response["error"]);
+      error: function (data) {
+        alert(data.responseJSON["error"]);
       }
     })
   });
@@ -254,8 +253,8 @@
         $('#comment-form-' + id).trigger("reset");
         location.reload();
       },
-      error: function (response) {
-        alert(response["error"]);
+      error: function (data) {
+        alert(data.responseJSON["error"]);
       }
     })
   };
@@ -274,8 +273,8 @@
         $(".new-reply-form").trigger("reset");
         location.reload();
       },
-      error: function (response) {
-        alert(response["error"]);
+      error: function (data) {
+        alert(data.responseJSON["error"]);
       }
     })
   });
@@ -290,8 +289,8 @@
         $("#reply-form-" + id).trigger("reset");
         location.reload();
       },
-      error: function (response) {
-        alert(response["error"]);
+      error: function (data) {
+        alert(data.responseJSON["error"]);
       }
     })
   };
@@ -309,8 +308,8 @@
       success: function () {
         location.reload();
       },
-      error: function (response) {
-        alert(response["error"]);
+      error: function (data) {
+        alert(data.responseJSON["error"]);
       }
     })
   };
@@ -328,8 +327,8 @@
       success: function () {
         location.reload();
       },
-      error: function (response) {
-        alert(response["error"]);
+      error: function (data) {
+        alert(data.responseJSON["error"]);
       }
     })
   };

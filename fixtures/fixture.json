@@ -106,38 +106,6 @@
     }
 },
 {
-    "model": "auth.group",
-    "pk": 5,
-    "fields": {
-        "name": "Demo_Admin",
-        "permissions": []
-    }
-},
-{
-    "model": "auth.group",
-    "pk": 6,
-    "fields": {
-        "name": "Demo_Developer",
-        "permissions": []
-    }
-},
-{
-    "model": "auth.group",
-    "pk": 7,
-    "fields": {
-        "name": "Demo_Project_Manager",
-        "permissions": []
-    }
-},
-{
-    "model": "auth.group",
-    "pk": 8,
-    "fields": {
-        "name": "Demo_Submitter",
-        "permissions": []
-    }
-},
-{
     "model": "auth.user",
     "pk": 1,
     "fields": {
@@ -267,7 +235,7 @@
         "username": "DemoUser",
         "first_name": "Demo",
         "last_name": "Admin",
-        "email": "demo@gmail.com",
+        "email": "demo@ex.com",
         "is_staff": false,
         "is_active": true,
         "date_joined": "2020-10-05T16:49:32Z",

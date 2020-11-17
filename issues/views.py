@@ -47,7 +47,7 @@ class DemoLoginView(View):
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username='DemoUser', email='demo@ex.com')
         login(request, user=user)
-        messages.success(self.request, f"You are currently logged in as a demo user. This means that you can interact with this website as if you are an admin, but any attempted changes will not actually be saved.")
+        messages.success(self.request, f"You are currently logged in as a demo user. This means that you can interact with this website as if you have full permissions, but any attempted changes will not actually be saved.")
         return redirect(reverse('issues:my-issues'))
 
 
@@ -264,11 +264,7 @@ class ProjectDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def get(self, request, *args, **kwargs):
         project = self.get_object()
         assigned_users = project.assigned_users.all()
-        if request.user.groups.filter(name='Admin').exists() or request.user.groups.filter(name='Project Manager').exists():
-            issues = Issue.objects.filter(project=project.id)
-        else:
-            # For Developers and Submitters, only display the issues they are assigned to.
-            issues = request.user.assigned_issues.filter(project=project.id)
+        issues = Issue.objects.filter(project=project.id)
         context = {
             'assigned_users': assigned_users,
             'project': project,
@@ -485,8 +481,9 @@ class IssueUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         admin_access = self.request.user.groups.filter(name='Admin').exists()
+        project_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
         assigned_user_access = True if self.request.user in self.get_object().assigned_users.all() else False
-        return admin_access or assigned_user_access
+        return admin_access or project_manager_access or assigned_user_access
 
     def get_object(self):
         issue_num = self.kwargs.get('issue_num')
@@ -517,15 +514,10 @@ class IssueUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return redirect(reverse('issues:issue-detail', kwargs={'project_slug': self.get_project_object().slug, 'issue_num': issue.num}))
 
 
-class IssueDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+class IssueDetailView(LoginRequiredMixin, DetailView):
     template_name = 'issues/issue_detail.html'
     comment_form = CommentForm
     reply_form = ReplyForm
-
-    def test_func(self):
-        admin_access = self.request.user.groups.filter(name='Admin').exists()
-        assigned_user_access = True if self.request.user in self.get_object().assigned_users.all() else False
-        return admin_access or assigned_user_access
 
     def get_object(self):
         issue_num = self.kwargs.get('issue_num')
@@ -555,8 +547,9 @@ class IssueDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def test_func(self):
         admin_access = self.request.user.groups.filter(name='Admin').exists()
+        project_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
         assigned_user_access = True if self.request.user in self.get_object().assigned_users.all() else False
-        return admin_access or assigned_user_access
+        return admin_access or project_manager_access or assigned_user_access
     
     def get_object(self):
         issue_num = self.kwargs.get('issue_num')
@@ -630,14 +623,14 @@ class IssueAssignView(LoginRequiredMixin, UserPassesTestMixin, FormView):
         return redirect(reverse('issues:issue-assign', kwargs={'project_slug': project.slug, 'issue_num': issue.num}))
 
 
-class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
+class CommentCreateView(LoginRequiredMixin, View):
     form_class = CommentForm
 
-    def test_func(self):
+    def access_func(self):
         admin_access = self.request.user.groups.filter(name='Admin').exists()
-        assigned_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
+        project_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
         assigned_user_access = True if self.request.user in self.get_issue_object().assigned_users.all() else False
-        return admin_access or assigned_manager_access or assigned_user_access
+        return admin_access or project_manager_access or assigned_user_access
     
     def get_project_object(self):
         slug_ = self.kwargs.get('project_slug')
@@ -648,7 +641,9 @@ class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
         return get_object_or_404(Issue, num=issue_num, project=self.get_project_object().id)
     
     def post(self, request, *args, **kwargs):
-        if request.is_ajax:
+        if self.access_func() == False:
+            return JsonResponse({'error': 'Only users assigned to this issue can leave comments.'}, status=403)
+        elif request.is_ajax:
             form = self.form_class(request.POST)
             if form.is_valid:
                 if self.request.user.email != 'demo@ex.com':
@@ -664,18 +659,18 @@ class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
             return JsonResponse({'error': 'Error: Request is not AJAX'}, status=400)
 
 
-class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
+class CommentUpdateView(LoginRequiredMixin, View):
     form_class = CommentForm
 
-    def test_func(self):
+    def access_func(self):
         admin_access = self.request.user.groups.filter(name='Admin').exists()
-        assigned_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
+        project_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
         
         comment_id = self.request.POST.get('comment-id')
         comment_author = Comment.objects.get(id=comment_id).author
         author_access = True if self.request.user == comment_author else False
 
-        return admin_access or assigned_manager_access or author_access
+        return admin_access or project_manager_access or author_access
     
     def get_project_object(self):
         slug_ = self.kwargs.get('project_slug')
@@ -686,7 +681,9 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
         return get_object_or_404(Issue, num=issue_num, project=self.get_project_object().id)
     
     def post(self, request, *args, **kwargs):
-        if request.is_ajax:
+        if self.access_func() == False:
+            return JsonResponse({'error': 'Only Admins, Project Managers, and comment authors may edit comments.'}, status=403)
+        elif request.is_ajax:
             # Construct a form instance from the posted data to validate the updated comment.
             updated_text = request.POST.get('updated-text')
             comment_id = request.POST.get('comment-id')
@@ -702,17 +699,17 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
             return JsonResponse({'error': 'Error: Request is not AJAX'}, status=400)
 
 
-class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+class CommentDeleteView(LoginRequiredMixin, View):
     
-    def test_func(self):
+    def access_func(self):
         admin_access = self.request.user.groups.filter(name='Admin').exists()
-        assigned_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
+        project_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
 
         comment_id = self.request.POST.get('comment-id')
         comment_author = Comment.objects.get(id=comment_id).author
         author_access = True if self.request.user == comment_author else False
 
-        return admin_access or assigned_manager_access or author_access
+        return admin_access or project_manager_access or author_access
     
     def get_project_object(self):
         slug_ = self.kwargs.get('project_slug')
@@ -723,7 +720,9 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
         return get_object_or_404(Issue, num=issue_num, project=self.get_project_object().id)
     
     def post(self, request, *args, **kwargs):
-        if request.is_ajax:
+        if self.access_func() == False:
+            return JsonResponse({'error': 'Only Admins, Project Managers, and comment authors may delete comments.'}, status=403)
+        elif request.is_ajax:
             if self.request.user.email != 'demo@ex.com':
                 comment_id = request.POST.get('comment-id')
                 comment = get_object_or_404(Comment, id=comment_id)
@@ -734,14 +733,14 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
             return JsonResponse({'error': 'Error: Request is not AJAX'}, status=400)
 
 
-class ReplyCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
+class ReplyCreateView(LoginRequiredMixin, View):
     form_class = ReplyForm
 
-    def test_func(self):
+    def access_func(self):
         admin_access = self.request.user.groups.filter(name='Admin').exists()
-        assigned_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
+        project_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
         assigned_user_access = True if self.request.user in self.get_issue_object().assigned_users.all() else False
-        return admin_access or assigned_manager_access or assigned_user_access
+        return admin_access or project_manager_access or assigned_user_access
 
     def get_project_object(self):
         slug_ = self.kwargs.get('project_slug')
@@ -752,7 +751,9 @@ class ReplyCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
         return get_object_or_404(Issue, num=issue_num, project=self.get_project_object().id)
     
     def post(self, request, *args, **kwargs):
-        if request.is_ajax:
+        if self.access_func() == False:
+            return JsonResponse({'error': 'Only users assigned to this issue can leave comments.'}, status=403)
+        elif request.is_ajax:
             form = self.form_class(request.POST)
             if form.is_valid:
                 if self.request.user.email != 'demo@ex.com':
@@ -768,17 +769,17 @@ class ReplyCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
             return JsonResponse({'error': 'Error: Request is not AJAX'}, status=400)
 
 
-class ReplyDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+class ReplyDeleteView(LoginRequiredMixin, View):
     
-    def test_func(self):
+    def access_func(self):
         admin_access = self.request.user.groups.filter(name='Admin').exists()
-        assigned_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
+        project_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
         
         reply_id = self.request.POST.get('reply-id')
         reply_author = Reply.objects.get(id=reply_id).author
         author_access = True if self.request.user == reply_author else False
 
-        return admin_access or assigned_manager_access or author_access
+        return admin_access or project_manager_access or author_access
     
     def get_project_object(self):
         slug_ = self.kwargs.get('project_slug')
@@ -789,7 +790,9 @@ class ReplyDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
         return get_object_or_404(Issue, num=issue_num, project=self.get_project_object().id)
     
     def post(self, request, *args, **kwargs):
-        if request.is_ajax:
+        if self.access_func() == False:
+            return JsonResponse({'error': 'Only Admins, Project Managers, and comment authors may delete comments.'}, status=403)
+        elif request.is_ajax:
             if self.request.user.email != 'demo@ex.com':
                 reply_id = request.POST.get('reply-id')
                 reply = get_object_or_404(Reply, id=reply_id)
@@ -800,18 +803,18 @@ class ReplyDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
             return JsonResponse({'error': 'Error: Request is not AJAX'}, status=400)
 
 
-class ReplyUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
+class ReplyUpdateView(LoginRequiredMixin, View):
     form_class = ReplyForm
 
-    def test_func(self):
+    def access_func(self):
         admin_access = self.request.user.groups.filter(name='Admin').exists()
-        assigned_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
+        project_manager_access = self.request.user.groups.filter(name='Project Manager').exists() and (self.request.user in self.get_project_object().assigned_users.all())
 
         reply_id = self.request.POST.get('reply-id')
         reply_author = Reply.objects.get(id=reply_id).author
         author_access = True if self.request.user == reply_author else False
 
-        return admin_access or assigned_manager_access or author_access
+        return admin_access or project_manager_access or author_access
     
     def get_project_object(self):
         slug_ = self.kwargs.get('project_slug')
@@ -822,7 +825,9 @@ class ReplyUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
         return get_object_or_404(Issue, num=issue_num, project=self.get_project_object().id)
     
     def post(self, request, *args, **kwargs):
-        if request.is_ajax:
+        if self.access_func() == False:
+            return JsonResponse({'error': 'Only Admins, Project Managers, and comment authors may edit comments.'}, status=403)
+        elif request.is_ajax:
             # Construct a form instance from the posted data to validate the updated reply.
             updated_text = request.POST.get('updated-text')
             reply_id = request.POST.get('reply-id')
