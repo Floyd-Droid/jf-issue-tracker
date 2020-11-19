@@ -427,7 +427,17 @@ class IssueCreateView(LoginRequiredMixin, CreateView):
 
             # Assign all project managers (group id=2), the submitter, and the assignee to the new issue.
             project_managers = new_issue.project.assigned_users.filter(groups__in=[2])
-            new_issue.assigned_users.add(self.request.user, new_issue.assignee, *project_managers)
+
+            # Assigning all relevant users at once works locally (mySQL or sqlite), even if the arg evaluates to 
+            # None. But Heroku's postgreSQL DB complains of missing user_id for such args, so here it's broken up.
+            new_issue.assigned_users.add(self.request.user)
+            if new_issue.assignee:
+                new_issue.assigned_users.add(new_issue.assignee)
+                # If the assignee is not already assigned to the project, add them.
+                if not new_issue.assignee in new_issue.project.assigned_users.all():
+                    new_issue.project.assigned_users.add(new_issue.assignee)
+            if project_managers:
+                new_issue.assigned_users.add(*project_managers)
 
             return redirect(reverse('issues:issue-detail', kwargs={'project_slug': new_issue.project.slug, 'issue_num': new_issue.num}))
         else:
@@ -467,8 +477,8 @@ class ProjectIssueCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView
             # Assign all project managers (group id=2), the submitter, and the assignee to the new issue.
             project_managers = project.assigned_users.filter(groups__in=[2])
 
-            # Assigning all relevant users at once works locally, but Heroku's postgreSQL DB
-            # complains of missing user_id if there is no assignee, so here it's broken up.
+            # Assigning all relevant users at once works locally (mySQL or sqlite), even if the arg evaluates to 
+            # None. But Heroku's postgreSQL DB complains of missing user_id for such args, so here it's broken up.
             new_issue.assigned_users.add(self.request.user)
             if new_issue.assignee:
                 new_issue.assigned_users.add(new_issue.assignee)
