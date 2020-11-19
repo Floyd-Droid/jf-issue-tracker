@@ -105,6 +105,7 @@ class ProjectIssueForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProjectIssueForm, self).__init__(*args, **kwargs)
+        self.fields['assignee'].queryset = User.objects.filter(is_active=True)
         self.fields['description'].widget.attrs = {'cols':'60', 'rows':'10'}
 
 
@@ -125,6 +126,7 @@ class IssueForm(forms.ModelForm):
         # The user should only be able to create issues for projects they are assigned.
         if user:
             self.fields['project'].queryset = user.assigned_projects.all()
+        self.fields['assignee'].queryset = User.objects.filter(is_active=True)
         self.fields['description'].widget.attrs = {'cols':'60', 'rows':'10'}
 
 
