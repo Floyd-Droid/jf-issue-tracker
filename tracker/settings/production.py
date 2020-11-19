@@ -3,7 +3,7 @@ import dj_database_url
 import os
 import sys
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'jf-issue-tracker.herokuapp.com']
 

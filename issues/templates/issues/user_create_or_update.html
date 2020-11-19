@@ -36,11 +36,13 @@
         {{form.email.label}} {{form.email}} {{form.email.errors}}
       </div>
     </div>
+    {% if user.groups.all.0.name == "Admin" %}
     <div class="row form-group">
       <div class="col">{{form.select_group.label}} {{form.select_group}} {{form.select_group.errors}}</div>
       <div class="col">
       </div>
     </div>
+    {% endif %}
     <div class="btn-container d-flex justify-content-center">
       <button class="btn btn-success submit-btn" type="submit">Save</button>
     </div>

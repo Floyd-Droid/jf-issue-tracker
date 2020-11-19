@@ -314,7 +314,10 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.email != 'demo@ex.com':
             project.delete()
         messages.success(request, f"Project '{project.title}' has been successfully deleted.")
-        return redirect(reverse('issues:projects-list'))
+        if self.request.user.groups.filter(name='Admin').exists():
+            return redirect(reverse('issues:projects-list'))
+        else:
+            return redirect(reverse('issues:my-projects'))
 
 
 class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -463,11 +466,17 @@ class ProjectIssueCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView
 
             # Assign all project managers (group id=2), the submitter, and the assignee to the new issue.
             project_managers = project.assigned_users.filter(groups__in=[2])
-            new_issue.assigned_users.add(self.request.user, new_issue.assignee, *project_managers)
 
-            # If the assignee is not already assigned to the project, add them.
-            if not new_issue.assignee in project.assigned_users.all():
-                project.assigned_users.add(new_issue.assignee)
+            # Assigning all relevant users at once works locally, but Heroku's postgreSQL DB
+            # complains of missing user_id if there is no assignee, so here it's broken up.
+            new_issue.assigned_users.add(self.request.user)
+            if new_issue.assignee:
+                new_issue.assigned_users.add(new_issue.assignee)
+                # If the assignee is not already assigned to the project, add them.
+                if not new_issue.assignee in project.assigned_users.all():
+                    project.assigned_users.add(new_issue.assignee)
+            if project_managers:
+                new_issue.assigned_users.add(*project_managers)
 
             return redirect(reverse('issues:issue-detail', kwargs={'project_slug': project.slug, 'issue_num': new_issue.num}))
         else:
@@ -610,6 +619,8 @@ class IssueAssignView(LoginRequiredMixin, UserPassesTestMixin, FormView):
 
             if action == 'assign' and not user in issue.assigned_users.all() and self.request.user.email != 'demo@ex.com':
                 issue.assigned_users.add(user)
+                if not user in project.assigned_users.all():
+                    project.assigned_users.add(user)
 
             elif action == 'unassign' and user in issue.assigned_users.all() and self.request.user.email != 'demo@ex.com':
                 issue.assigned_users.remove(user)

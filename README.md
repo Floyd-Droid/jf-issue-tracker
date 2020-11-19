@@ -21,7 +21,7 @@ For a demo, visit https://jf-issue-tracker.herokuapp.com
 
 You can log in as a demo user, which allows you to interact with the site as if you have full permissions, but without the ability to make any changes to heroku's postgreSQL database.
 
-You can also create your own account, which will place you in the 'Project Manager' group, allowing you to create and manage your own projects and issues.
+You can also create your own account, which will place you in the 'Project Manager' group, allowing you to create and manage your own projects and issues. Only you can see the projects, issues, and comments you create, unless you assign another user to your project.
 
 # Author
 

@@ -16,8 +16,8 @@ class SignUpView(CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        # Every new user will be a manager (group id=2) by default.
+        # Every new user will be a project manager (group id=2) by default.
         new_user.groups.set([2])
         login(self.request, user=new_user)
-        messages.success(self.request, f"Welcome to the site! From here, you can create projects and keep track of related issues. Only you can see the projects, issues, and comments you create. To see a full demonstration of site functionality (without the ability to make changes to the database), log in as a demo user.")
+        messages.success(self.request, f"Welcome to the site! From here, you can create projects and keep track of related issues. Only you can see the projects, issues, and comments you create, unless you assign another user to your project. To see a full demonstration of site functionality (without the ability to make changes to the database), log in as a demo user.")
         return redirect(reverse('issues:my-projects'))
