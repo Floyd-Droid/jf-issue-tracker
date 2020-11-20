@@ -32,7 +32,7 @@ a#welcome-msg {
   width:15rem;
   border-radius: 5px;
   position: relative;
-  z-index: 5;
+  z-index: 1;
   box-shadow: 0 10px 10px black;
 }
 
@@ -170,11 +170,14 @@ div p.attr-name {
 /* Comment section */
 
 div.comment-container {
-  background-color: rgb(240, 240, 240);
+  background-color: white;
   border: 1px ridge #14227b;
   border-radius: 5px;
   margin: 3vh auto 3vh;
   padding-bottom: 10px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 5px 5px 5px gray;
 }
 
 div.reply-container {
@@ -198,12 +201,16 @@ div.comment-btn-container, div.reply-btn-container {
 }
 
 div.comment-btn-container input, div.reply-btn-container input {
-  background: none!important;
+  background: none;
   border: none;
-  padding: 0!important;
-  color: #069;
-  text-decoration: underline;
+  padding: 0;
+  color: grey;
+  font-weight: bolder;
   cursor: pointer;
+}
+
+div.comment-btn-container input:hover, div.reply-btn-container input:hover {
+  text-decoration: underline;
 }
 
 .new-reply-form {
